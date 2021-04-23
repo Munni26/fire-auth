@@ -89,6 +89,7 @@ function App() {
           newUSerInfo.error = '';
           newUSerInfo.success = true;
           setUser(newUSerInfo);
+          updateUserName(user.name);
           // var user = res.user;
           // console.log(res);
           // ...
@@ -114,7 +115,8 @@ function App() {
           newUserInfo.error = '';
           newUserInfo.success = true;
           setUser(newUserInfo);
-          var user = res.user;
+          console.log('sign in user info', res.user);
+          // var user = res.user;
           // ...
         })
         .catch((error) => {
@@ -128,12 +130,29 @@ function App() {
 
     e.preventDefault();
   }
+
+  const updateUserName = name => {
+    const user = firebase.auth().currentUser;
+
+    user.updateProfile({
+      displayName: name
+    }).then(function () {
+      console.log('user name updated successfully');
+      // Update successful.
+    }).catch(function (error) {
+      console.log(error);
+      // An error happened.
+    });
+  }
+
   return (
     <div className="App">
       {
         user.isSignedIn ? <button onClick={handleSignOut}>Sign Out</button> :
           <button onClick={handleSignIn}>Sign In</button>
       }
+      <br/>
+      <button>Sign in using Facebook</button>
       {
         user.isSignedIn && <div>
           <p>Welcome, {user.name}</p>
@@ -156,7 +175,7 @@ function App() {
         <br />
         <input type="password" onBlur={handleBlur} name="password" placeholder="Your password" required />
         <br />
-        <input type="submit" value="Submit" />
+        <input type="submit" value={newUser ? 'Sign Up' : 'Sign In'} />
       </form>
       <p style={{ color: 'red' }}>{user.error}</p>
       { user.success && <p style={{ color: 'green' }}>User {newUser ? 'created' : 'Logged In'} successfully</p>}
